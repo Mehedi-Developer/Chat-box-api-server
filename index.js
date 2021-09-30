@@ -4,7 +4,6 @@ const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const multer = require("multer");
 const rootPath = require("./routes/rootPath");
 const userRoute = require("./routes/users");
 const authRoute = require("./routes/auth");
@@ -37,67 +36,12 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('uploads'));
 app.use(fileUpload());
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "public/images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, req.body.name);
-  },
-});
-
-const upload = multer({ storage: storage });
-
-
-
-
-const fileFilter = (req, file, cb) => {
-  // reject a file
-  if (file.mimetype === 'image/jpeg' || 
-  file.mimetype === 'image/png' || 
-  file.mimetype === 'image/jpg') {
-    cb(null, true);
-  } else {
-    cb(null, false);
-  }
-};
-// const upload = multer({ dest: "upload/" });
-
-
-app.post("/api/upload", (req, res) => {
-  // const {file} = req.body;
-  // const file = req?.files.file;
-  console.log({req});
-  // const filePath = `${__dirname}/uploads/${file.name}`;
-  // file.mv(filePath, (err) => {
-  //     if(err){
-  //         console.log(err);
-  //         res.status(500).send({msg: 'Failed to upload image'});
-  //     }
-  //     const newImg = fs.readFileSync(filePath);
-  //     const encImg = newImg.toString('base64');
-  //     const image = {
-  //         contentType: file.mimetype,
-  //         size: file.size,
-  //         img: Buffer(encImg, 'base64')
-  //     }
-  //     console.log({image});
-  //     res.status(200).json({msg: 'File uploaded successfully', image});
-  // })
-  // try {
-  //   return res.status(200).json("File uploaded successfully");
-  // } catch (error) {
-  //   console.error(error);
-  // }
-});
-
 app.use(rootPath);
 app.use("/api/auth", authRoute);
 app.use("/api/user", userRoute);
 app.use("/api/posts", postRoute);
 app.use("/api/conversations", conversationRoute);
 app.use("/api/messages", messageRoute);
-
 app.listen(4000, () => {
   console.log("Backend server is running!");
 });
