@@ -26,9 +26,10 @@ mongoose.connect(
     console.log("Connected to MongoDB");
   }
 );
-app.use("/images", express.static(path.join(__dirname, "public/images")));
+// app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 //middleware
+mongoose.set('useCreateIndex', true);
 app.use(express.json());
 // app.use('/uploads', express.static('uploads'));
 app.use(helmet());
@@ -37,27 +38,19 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('uploads'));
 app.use(fileUpload());
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "public/images");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, req.body.name);
-//   },
-// });
-
-// const upload = multer({ storage: storage });
-// // const multer = require('multer');
-
 const storage = multer.diskStorage({
-  destination: function(req, file, cb) {
-    cb(null, './uploads');
+  destination: (req, file, cb) => {
+    cb(null, "public/images");
   },
-  filename: function(req, file, cb) {
-    console.log({file});
-    cb(null, new Date().toISOString() + file.originalname);
-  }
+  filename: (req, file, cb) => {
+    cb(null, req.body.name);
+  },
 });
+
+const upload = multer({ storage: storage });
+// const multer = require('multer');
+
+
 
 const fileFilter = (req, file, cb) => {
   // reject a file
@@ -70,13 +63,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 // const upload = multer({ dest: "upload/" });
-const upload = multer({
-  storage: storage
-  // limits: {
-  //   fileSize: 1024 * 1024 * 5
-  // },
-  // fileFilter: fileFilter
-});
+
 
 app.post("/api/upload", (req, res) => {
   // const {file} = req.body;
