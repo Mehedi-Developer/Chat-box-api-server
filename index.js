@@ -29,7 +29,6 @@ mongoose.connect(
 // app.use("/images", express.static(path.join(__dirname, "public/images")));
 
 //middleware
-mongoose.set('useCreateIndex', true);
 app.use(express.json());
 // app.use('/uploads', express.static('uploads'));
 app.use(helmet());
@@ -48,7 +47,7 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-// const multer = require('multer');
+
 
 
 
